@@ -1,0 +1,27 @@
+{
+    "tokenName": "DAO Governance Token",
+    "tokenSymbol": "DAOG",
+    "maxSupply": "1000000",
+    "governance": {
+        "votingDelay": {
+            "value": 1,
+            "description": "Number of blocks before voting starts (1 block ≈ 12 seconds)"
+        },
+        "votingPeriod": {
+            "value": 50400,
+            "description": "Voting duration in blocks (~1 week with 12s blocks)"
+        },
+        "proposalThreshold": {
+            "value": "1000",
+            "description": "Minimum tokens needed to create a proposal"
+        },
+        "quorumPercentage": {
+            "value": 4,
+            "description": "Percentage of total supply needed for quorum"
+        },
+        "timelockDelay": {
+            "value": 3600,
+            "description": "Delay before execution in seconds (1 hour)"
+        }
+    }
+}
