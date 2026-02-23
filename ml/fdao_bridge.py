@@ -38,18 +38,35 @@ def local_train(client_id, global_model, epochs=5):
     contribution_score = max(0, 100 - int(loss.item() * 10))
     return local_model.state_dict(), contribution_score
 
-def aggregate_models(global_model, client_updates):
-    print("\n Aggregating client updates (FedAvg)...")
+def aggregate_with_filter(global_model, client_updates, client_scores, threshold=50):
+    """
+    Implements the F-DAO Mitigation Strategy.
+    Evaluation of quality happens BEFORE aggregation.
+    """
+    print("\n  Applying F-DAO Contribution Assessment Filter...")
+    valid_updates = []
+    
+    for i, score in client_scores.items():
+        if score >= threshold:
+            valid_updates.append(client_updates[i-1])
+        else:
+            print(f" Rejecting malicious/low-quality update from Client {i} (Score {score})")
+    
+    if not valid_updates:
+        print(" No valid updates. Global model remains unchanged.")
+        return global_model
+
+    print(f" Aggregating {len(valid_updates)} verified updates (FedAvg)...")
     global_dict = global_model.state_dict()
     for key in global_dict.keys():
-        global_dict[key] = torch.stack([client_updates[i][key] for i in range(len(client_updates))], 0).mean(0)
+        global_dict[key] = torch.stack([update[key] for update in valid_updates], 0).mean(0)
+    
     global_model.load_state_dict(global_dict)
-    print(" Global model successfully updated!")
+    print(" Global model successfully updated with verified weights!")
     return global_model
 
-
 def distribute_rewards(client_scores):
-    print("\n🔗 --- Connecting to Local F-DAO Blockchain ---")
+    print("\n --- Connecting to Local F-DAO Blockchain ---")
     w3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
     
     if not w3.is_connected():
@@ -83,7 +100,7 @@ def distribute_rewards(client_scores):
         tokens_to_award = (score * 10) 
         wei_to_award = tokens_to_award * (10 ** 18)
         
-        print(f"  -> Sending {tokens_to_award} F-DAO Tokens to Client {client_id} ({client_address[:8]}...) based on score {score}")
+        print(f"  -> Sending {tokens_to_award} F-DAO Tokens to Client {client_id} (Score {score})")
         
         try:
             tx_hash = token_contract.functions.transfer(client_address, wei_to_award).transact({'from': AGGREGATOR_ACCOUNT})
@@ -107,7 +124,7 @@ def main():
         client_scores[i] = score
         time.sleep(1)
         
-    global_model = aggregate_models(global_model, client_updates)
+    global_model = aggregate_with_filter(global_model, client_updates, client_scores)
     
     distribute_rewards(client_scores)
     
