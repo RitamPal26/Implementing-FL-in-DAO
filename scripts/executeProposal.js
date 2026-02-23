@@ -35,14 +35,14 @@ async function main() {
   console.log("Current Proposal State:", state);
 
   if (state === 1n) {
-    console.log("\n⏩ Fast-forwarding time to end the voting period...");
+    console.log("\n Fast-forwarding time to end the voting period...");
     await mineBlocks(50500);
     state = await governor.state(proposalId);
     console.log("State after voting period:", state);
   }
 
   if (state === 4n) {
-    console.log("\n⏳ Queueing the proposal in the Timelock...");
+    console.log("\n Queueing the proposal in the Timelock...");
     const queueTx = await governor.queue(
       targets,
       values,
@@ -50,10 +50,10 @@ async function main() {
       descriptionHash,
     );
     await queueTx.wait();
-    console.log("✅ Proposal queued!");
+    console.log(" Proposal queued!");
 
     console.log(
-      "\n⏩ Fast-forwarding time to bypass Timelock delay (e.g., 24 hours)...",
+      "\n Fast-forwarding time to bypass Timelock delay (e.g., 24 hours)...",
     );
     await ethers.provider.send("evm_increaseTime", [86400]);
     await ethers.provider.send("evm_mine");
@@ -64,7 +64,7 @@ async function main() {
 
   state = await governor.state(proposalId);
   if (state === 5n) {
-    console.log("\n🚀 Executing the proposal...");
+    console.log("\n Executing the proposal...");
     const executeTx = await governor.execute(
       targets,
       values,
@@ -72,9 +72,7 @@ async function main() {
       descriptionHash,
     );
     await executeTx.wait();
-    console.log(
-      "✅ Proposal executed successfully! Funds have been withdrawn.",
-    );
+    console.log(" Proposal executed successfully! Funds have been withdrawn.");
   }
 }
 

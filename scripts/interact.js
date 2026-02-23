@@ -31,7 +31,7 @@ async function main() {
   const voteTx = await governor.castVote(PROPOSAL_ID, voteType);
   await voteTx.wait();
 
-  console.log("✅ Vote cast successfully!");
+  console.log(" Vote cast successfully!");
 }
 
 main()

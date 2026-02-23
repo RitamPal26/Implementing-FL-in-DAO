@@ -7,7 +7,7 @@ async function main() {
 
   const [deployer] = await ethers.getSigners();
 
-  console.log("💰 Sending 1.0 ETH to the DAO Treasury...");
+  console.log(" Sending 1.0 ETH to the DAO Treasury...");
 
   const tx = await deployer.sendTransaction({
     to: treasuryAddress,
@@ -15,7 +15,7 @@ async function main() {
   });
   await tx.wait();
 
-  console.log("✅ Treasury successfully funded!");
+  console.log(" Treasury successfully funded!");
 }
 
 main()
