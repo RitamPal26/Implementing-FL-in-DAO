@@ -6,6 +6,7 @@ import LocalTraining from "./components/dashboard/LocalTraining";
 import MiddleSection from "./components/dashboard/MiddleSection";
 import LogStream from "./components/dashboard/LogStream";
 import LiveExplainer from "./components/dashboard/LiveExplainer";
+import InvestmentUtility from "./components/dashboard/InvestmentUtility";
 
 export default function App() {
   const sim = useSimulation();
@@ -36,6 +37,19 @@ export default function App() {
           />
 
           <LocalTraining round={sim.round} currentData={sim.currentData} />
+
+          <main className="flex-1 flex flex-col gap-6 overflow-y-auto">
+            <MetricsGrid round={sim.round} currentData={sim.currentData} />
+
+            <MiddleSection
+              currentData={sim.currentData}
+              chartData={sim.chartData}
+            />
+
+            <LocalTraining round={sim.round} currentData={sim.currentData} />
+
+            <InvestmentUtility round={sim.round} isPlaying={sim.isPlaying} />
+          </main>
 
           <LogStream logs={sim.logs} />
         </main>
