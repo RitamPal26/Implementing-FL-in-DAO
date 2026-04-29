@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
-import { MOCK_DATA } from "../data/simulationData";
+import flData from "../results/fl_results.json";
+
+const REAL_DATA = flData.rounds.map((r) => ({
+  round: r.round,
+  mse: r.global_mse,
+  c1: r.scores[0],
+  c2: r.scores[1],
+  c3: r.scores[2],
+  attacker: r.scores[3],
+}));
 
 export function useSimulation() {
   const [round, setRound] = useState(0);
@@ -10,7 +19,7 @@ export function useSimulation() {
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    if (isPlaying && round < 5) {
+    if (isPlaying && round < REAL_DATA.length) {
       timer = setTimeout(() => {
         setRound((r) => r + 1);
         setLogs((prev) => [
@@ -20,7 +29,7 @@ export function useSimulation() {
           ...prev,
         ]);
       }, 2000);
-    } else if (round >= 5) {
+    } else if (round >= REAL_DATA.length) {
       setIsPlaying(false);
     }
     return () => clearTimeout(timer);
@@ -35,15 +44,15 @@ export function useSimulation() {
   };
 
   const jumpToRound = (r: number) => {
-    if (r >= 0 && r <= 5) setRound(r);
+    if (r >= 0 && r <= REAL_DATA.length) setRound(r);
   };
 
   return {
     round,
     isPlaying,
     logs,
-    currentData: round > 0 ? MOCK_DATA[round - 1] : null,
-    chartData: MOCK_DATA.slice(0, round),
+    currentData: round > 0 ? REAL_DATA[round - 1] : null,
+    chartData: REAL_DATA.slice(0, round),
     togglePlay,
     reset,
     jumpToRound,
