@@ -1,6 +1,12 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CLIENT_CONFIG } from "../../data/simulationData";
+
+const CLIENT_CONFIG = [
+  { id: "Client 1", tag: "AAPL", color: "bg-blue-500" },
+  { id: "Client 2", tag: "MSFT", color: "bg-emerald-500" },
+  { id: "Client 3", tag: "GOOGL", color: "bg-amber-500" },
+  { id: "Attacker", tag: "AMZN", color: "bg-red-500", isAttacker: true },
+];
 
 export default function LocalTraining({ round, currentData }: any) {
   return (
@@ -12,7 +18,11 @@ export default function LocalTraining({ round, currentData }: any) {
         >
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-sm">{client.id}</CardTitle>
-            <Badge className={`${client.color} text-white`}>{client.tag}</Badge>
+            <Badge
+              className={`${client.color} text-white hover:${client.color}`}
+            >
+              {client.tag}
+            </Badge>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4 text-sm mt-4">

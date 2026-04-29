@@ -20,6 +20,8 @@ export default function App() {
           isPlaying={sim.isPlaying}
           togglePlay={sim.togglePlay}
           jumpToRound={sim.jumpToRound}
+          attackType={sim.attackType}
+          onAttackChange={sim.handleAttackChange}
         />
 
         <main className="flex-1 flex flex-col gap-6 overflow-y-auto">
