@@ -5,6 +5,7 @@ import MetricsGrid from "./components/dashboard/MetricsGrid";
 import LocalTraining from "./components/dashboard/LocalTraining";
 import MiddleSection from "./components/dashboard/MiddleSection";
 import LogStream from "./components/dashboard/LogStream";
+import LiveExplainer from "./components/dashboard/LiveExplainer";
 
 export default function App() {
   const sim = useSimulation();
@@ -23,6 +24,8 @@ export default function App() {
 
         <main className="flex-1 flex flex-col gap-6 overflow-y-auto">
           <MetricsGrid round={sim.round} currentData={sim.currentData} />
+
+          <LiveExplainer round={sim.round} isPlaying={sim.isPlaying} />
 
           <MiddleSection
             round={sim.round}
