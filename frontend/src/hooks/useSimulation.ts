@@ -21,8 +21,11 @@ export function useSimulation() {
   const [round, setRound] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [attackType, setAttackType] = useState<AttackType>("none");
-  const [logs, setLogs] = useState<string[]>([
-    "Ready: Choose a threat model and click Run",
+  const [logs, setLogs] = useState<{ time: string; text: string }[]>([
+    {
+      time: new Date().toLocaleTimeString(),
+      text: "System initialized. Waiting for threat model selection and execution.",
+    },
   ]);
 
   const activeDataset = useMemo(() => {
@@ -40,21 +43,57 @@ export function useSimulation() {
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
+
     if (isPlaying && round < activeDataset.length) {
       timer = setTimeout(() => {
+        const currentData = activeDataset[round];
+        const timeNow = new Date().toLocaleTimeString();
+        let detailedLog = "";
+
+        // Generate a context-aware narrative based on the active threat model
+        switch (attackType) {
+          case "poisoning":
+            detailedLog = `Round ${
+              round + 1
+            } validation complete. The Proof-of-Learning filter detected a massive MSE spike from the Attacker node (Score: ${
+              currentData.attacker
+            }/100). The malicious payload was explicitly REJECTED. The global model aggregated the remaining honest nodes via SoftMax FedAvg.`;
+            break;
+          case "sybil":
+            detailedLog = `Round ${
+              round + 1
+            } validation complete. Sybil Defense activated! Multiple nodes (Client 2, Client 3, and Attacker) returned suspiciously high-error/identical weights. The Smart Contract slashed their governance power to 0. Only Client 1's update was accepted.`;
+            break;
+          case "freeriding":
+            detailedLog = `Round ${
+              round + 1
+            } validation complete. Client identified as a Free-Rider. The attacker submitted unmodified global weights to save compute (Score: ${
+              currentData.attacker
+            }/100). Because it passed the basic threshold, it was accepted, but convergence speed is visibly degraded.`;
+            break;
+          default:
+            detailedLog = `Round ${
+              round + 1
+            } validation complete. All 4 nodes submitted high-quality local updates. Proof-of-Learning scores ranged from ${Math.min(
+              currentData.c1,
+              currentData.c2,
+              currentData.c3,
+            )} to ${Math.max(
+              currentData.c1,
+              currentData.c2,
+              currentData.c3,
+            )}. Smart contract minted proportional FDAO tokens to all participants.`;
+        }
+
         setRound((r) => r + 1);
-        setLogs((prev) => [
-          `Round ${
-            round + 1
-          } completed. Aggregation applied based on current threat model.`,
-          ...prev,
-        ]);
+        setLogs((prev) => [{ time: timeNow, text: detailedLog }, ...prev]);
       }, 2000);
     } else if (round >= activeDataset.length) {
       setIsPlaying(false);
     }
+
     return () => clearTimeout(timer);
-  }, [isPlaying, round, activeDataset.length]);
+  }, [isPlaying, round, activeDataset, attackType]);
 
   const togglePlay = () => setIsPlaying(!isPlaying);
 

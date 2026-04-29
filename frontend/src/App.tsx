@@ -26,7 +26,6 @@ export default function App() {
         />
 
         <main className="flex-1 flex flex-col gap-6 overflow-y-auto">
-          <MetricsGrid round={sim.round} currentData={sim.currentData} />
 
           <LiveExplainer round={sim.round} isPlaying={sim.isPlaying} />
 
@@ -36,15 +35,8 @@ export default function App() {
             chartData={sim.chartData}
           />
 
-          <LocalTraining round={sim.round} currentData={sim.currentData} />
-
           <main className="flex-1 flex flex-col gap-6 overflow-y-auto">
             <MetricsGrid round={sim.round} currentData={sim.currentData} />
-
-            <MiddleSection
-              currentData={sim.currentData}
-              chartData={sim.chartData}
-            />
 
             <LocalTraining round={sim.round} currentData={sim.currentData} />
 
