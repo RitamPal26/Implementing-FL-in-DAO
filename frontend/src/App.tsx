@@ -13,13 +13,18 @@ import ProofOfLearningXRay from "./components/dashboard/ProofOfLearningXRay";
 export default function App() {
   const sim = useSimulation();
 
+  const clientNameMap: Record<string, string> = {
+    c1: "AAPL",
+    c2: "MSFT",
+    c3: "GOOGL",
+    attacker: "AMZN Attacker",
+  };
+
   const xrayClients = sim.currentData
     ? Object.entries(sim.currentData)
         .filter(([key]) => key !== "round" && key !== "mse")
         .map(([key, value]) => {
-          const formattedId = key.startsWith("c")
-            ? `Client ${key.replace("c", "")}`
-            : key.charAt(0).toUpperCase() + key.slice(1);
+          const formattedId = clientNameMap[key] || key;
 
           return {
             id: formattedId,
